@@ -1,5 +1,6 @@
 let audio = null
 let recorder = null
+let blob = null
 
 navigator.mediaDevices.getUserMedia({ audio: true })
     .then(stream => {
@@ -11,10 +12,10 @@ navigator.mediaDevices.getUserMedia({ audio: true })
         });
 
         recorder.addEventListener("stop", () => {
-            const audioBlob = new Blob(audioChunks);
+            blob = new Blob(audioChunks);
             audioChunks = []
-            const audioUrl = URL.createObjectURL(audioBlob);
-            audio = new Audio(audioUrl);
+            const audioUrl = URL.createObjectURL(blob);
+            audio = new Audio(audioUrl,);
         });
     });
 
@@ -30,9 +31,24 @@ function stop(){
     recorder.stop()
 }
 
-let player = null
-
 function play(){
      player = audio.play()
-    player.finally(() => console.log("Done"))
 }
+
+async function uploadAudio(audioBlob, filename = "audio.webm") {
+    const formData = new FormData();
+    formData.append("file", audioBlob, filename);
+
+    try {
+        const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+        });
+
+        const result = await response.json();
+        console.log("Upload response:", result);
+    } catch (error) {
+        console.error("Upload error:", error);
+    }
+}
+
