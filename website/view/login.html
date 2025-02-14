@@ -2,6 +2,8 @@
     <head>
         <title>CTRL+ALT+DELAY!!!</title>
         <link rel="stylesheet" href="static/styles/login.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="static/scripts/form_submit.js"></script>
     </head>
     <body>
         <br>
@@ -16,6 +18,6 @@
         <input type="pin" name="pin" placeholder="Enter your UPI Pin">   
         <br> 
         <br>    
-        <button type="button" name="login_button">Submit</button>
+        <button id="submit" onclick='submit()' type="button" name="login_button">Submit</button>
     </body>
 </html>
