@@ -103,7 +103,6 @@ def get_data():
     token = token.json()["detail"]
     global jwt_token
     jwt_token = token
-    app.logger.info(jwt_token)
     return ""
 
 @app.route('/verification')
