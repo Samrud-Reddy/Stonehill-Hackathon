@@ -31,13 +31,14 @@ function stop(){
     recorder.stop()
 }
 
-function play(){
-     player = audio.play()
+function play(url){
+    const sound = new Audio(url);
+    sound.play()
 }
 
-async function uploadAudio(audioBlob, filename = "audio.webm") {
+async function uploadAudio(filename = "audio.webm") {
     const formData = new FormData();
-    formData.append("file", audioBlob, filename);
+    formData.append("file", blob, filename);
 
     try {
         const response = await fetch("/upload", {

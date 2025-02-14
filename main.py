@@ -1,6 +1,6 @@
 from website.app import app
 import os
-from flask import Flask, render_template, request, jsonify, session, redirect
+from flask import Flask, render_template, request, jsonify, session, redirect, send_from_directory
 import requests
 from dotenv import load_dotenv
 
@@ -14,7 +14,7 @@ redirect_uri = "http://127.0.0.1:1234/login/callback"
 scope = "email profile https://www.googleapis.com/auth/contacts.readonly"
 
 contacts_list = {}
-AUDIO_FOLDER = "uploads"
+AUDIO_FOLDER = "audio"
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
 app.config["AUDIO_FOLDER"] = AUDIO_FOLDER
 
@@ -94,6 +94,11 @@ def get_data():
 @app.route('/verification')
 def verification():
     return render_template("login.html")
+
+@app.route('/audio/<filename>')
+def audio(filename):
+    return send_from_directory("../"+AUDIO_FOLDER, filename)
+
 
 @app.route('/')
 def home():
