@@ -26,7 +26,11 @@ def upload_audio():
 
 @app.route('/')
 def home():
-    return render_template("index.html")
+    return render_template("login.html")
+
+@app.route('/mic')
+def mic():
+    return render_template("mic_page.html")
 
 if __name__ == '__main__':
     app.run(debug=True, port=1234)
