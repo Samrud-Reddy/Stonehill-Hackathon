@@ -1,7 +1,7 @@
 
 function submit() {
     var phoneNumber = $("input[type='tel']").val();
-    var upi_id = $("input[type='number']").val();
+    var upi_id = $("input[type='upi_id']").val();
     var pin = $("input[type='pin']").val();
 
     $.ajax({

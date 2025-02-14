@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import hashlib
 
+
 load_dotenv()
 
 def create_jwt_token(phone_number: str, upi_id: str) -> str:

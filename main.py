@@ -1,6 +1,8 @@
 from website.app import app
+from urllib.parse import urlencode
 import os
 from flask import Flask, render_template, request, jsonify, session, redirect, send_from_directory
+from flask_cors import CORS
 import requests
 from dotenv import load_dotenv
 
@@ -9,11 +11,13 @@ API_KEY = os.getenv('PEOPLE_API_KEY')
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
+UPI_API = "http://127.0.0.1:5000/"
 
 redirect_uri = "http://127.0.0.1:1234/login/callback"
 scope = "email profile https://www.googleapis.com/auth/contacts.readonly"
 
 contacts_list = {}
+jwt_token = ""
 AUDIO_FOLDER = "audio"
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
 app.config["AUDIO_FOLDER"] = AUDIO_FOLDER
@@ -89,7 +93,18 @@ def get_data():
     upi = data.get('upi_id')
     pwd = data.get('pwd')
 
-    return jsonify({"message": "Received phone number", "phone": phone})
+    params = {
+                "phone_number": phone,
+                "upi_id": upi,
+                "upi_pin": pwd,
+            }
+
+    token = requests.post(UPI_API+"/api/user/loginUser", params=urlencode(params))
+    token = token.json()["detail"]
+    global jwt_token
+    jwt_token = token
+    app.logger.info(jwt_token)
+    return ""
 
 @app.route('/verification')
 def verification():
@@ -102,7 +117,7 @@ def audio(filename):
 
 @app.route('/')
 def home():
-    if "access_token" in session:
+    if "access_token" in session and jwt_token != "":
         return render_template("mic_page.html")
     else:
         return redirect("/verification")

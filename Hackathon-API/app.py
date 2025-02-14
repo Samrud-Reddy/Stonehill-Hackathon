@@ -21,7 +21,7 @@ def login(phone_number: str, upi_id: str, upi_pin: str):
         result = functions.encryption.create_jwt_token(phone_number=phone_number,
                                               upi_id=upi_id)
         
-        raise HTTPException(status_code=404, detail=f"{result}")
+        raise HTTPException(status_code=200, detail=f"{result}")
         
 @app.post("/api/user/transactions/makeTransaction/")
 def send_money(jwt_token: str, amount: float, sender_phone_num: str = None, receiver_phone_num: str = None, 

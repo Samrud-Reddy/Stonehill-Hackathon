@@ -7,19 +7,35 @@
     </header>
     <body>
         <div class="center-button">
-        <button>
-            <img src="static/images/mic.jpg" alt="Button Image" width="560" height="560">
+        <button id="touchpad" class="central">
+            Touch pad
+        </button>
+        <button id="mic" class="central">
+            <img src="static/images/mic.jpg" alt="Mic">
         </button>
         </div>
     <script src="static/scripts/mic.js"></script>
+    <script src="static/scripts/touchpad.js"></script>
     <style>
-    .center-button
-    {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh; /* Centers vertically */
-    }
+        .central{
+            height: 560px;
+            width: 560px;
+        }
+
+        img {
+            height: 100%;
+            width: 100%;
+        }
+
+        #mic {
+        }
+
+        .center-button
+            {
+            display:flex;
+            align-items:center;
+            justify-content: center;
+        }
     </style>
     </body>
 </html>
