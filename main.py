@@ -1,10 +1,15 @@
+import gemini_apicall
+import json
 from website.app import app
+import asyncio
 from urllib.parse import urlencode
 import os
-from flask import Flask, render_template, request, jsonify, session, redirect, send_from_directory
-from flask_cors import CORS
+from flask import Flask, render_template, request, jsonify, session, redirect, send_from_directory, json
 import requests
 from dotenv import load_dotenv
+import text_to_speech
+import speech_to_text
+import gemini_webapi
 
 load_dotenv()
 API_KEY = os.getenv('PEOPLE_API_KEY')
@@ -18,9 +23,23 @@ scope = "email profile https://www.googleapis.com/auth/contacts.readonly"
 
 contacts_list = {}
 jwt_token = ""
+phone = ""
 AUDIO_FOLDER = "audio"
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
 app.config["AUDIO_FOLDER"] = AUDIO_FOLDER
+
+def string_to_json(string_data: str):
+    # Remove surrounding markdown and unnecessary whitespace
+    app.logger.info(string_data)
+    cleaned_string = string_data.strip().strip('"')
+    
+    # Extract JSON part
+    json_start = cleaned_string.find('{')
+    json_end = cleaned_string.rfind('}') + 1
+    json_string = cleaned_string[json_start:json_end]
+    
+    json_data = json.loads(json_string)
+    return json_data
 
 @app.route('/login')
 def login():
@@ -89,6 +108,7 @@ def upload_audio():
 @app.route('/get-data', methods=["POST"])
 def get_data():
     data = request.form  # Gets data sent via x-www-form-urlencoded (default for $.ajax)
+    global phone
     phone = data.get('phone')
     upi = data.get('upi_id')
     pwd = data.get('pwd')
@@ -113,6 +133,44 @@ def verification():
 def audio(filename):
     return send_from_directory("../"+AUDIO_FOLDER, filename)
 
+@app.route('/balance')
+def balance():
+    params = {
+            "phone_number": phone,
+            }
+
+    body = requests.post(UPI_API+"/api/user/checkBalance", params=urlencode(params))
+    balance = body.json()["balance"]
+
+    file = text_to_speech.balance(balance)
+    to_return = {"file": file}
+    return json.dumps(to_return)
+
+@app.route('/payment-audio')
+def payment_audio():
+    text = speech_to_text.stt("audio/payments.webm") 
+    app.logger.info(text)
+    
+    out = asyncio.run(gemini_apicall.main(text))
+
+    to_return = string_to_json(out)
+
+    if to_return["type"] == "phone":
+        file = text_to_speech.confirm_number(to_return["amount"], to_return["recipient"])
+    elif to_return["type"] == "contact":
+        file = text_to_speech.confirm_contact(to_return["amount"], to_return["recipient"])
+    else:
+        file = ""
+
+    to_return["audio_file"] = file
+
+    return json.dumps(to_return)
+
+@app.route('/pay', methods=["POST"])
+def pay():
+    data = request.get_json()
+    app.logger.info(data)
+    return jsonify({"message": "Data received successfully", "data": data}), 200 
 
 @app.route('/')
 def home():

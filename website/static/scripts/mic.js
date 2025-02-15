@@ -1,6 +1,7 @@
 let audio = null
 let recorder = null
 let blob = null
+let payment = {}
 
 navigator.mediaDevices.getUserMedia({ audio: true })
     .then(stream => {
@@ -15,14 +16,14 @@ navigator.mediaDevices.getUserMedia({ audio: true })
             blob = new Blob(audioChunks);
             audioChunks = []
             const audioUrl = URL.createObjectURL(blob);
-            audio = new Audio(audioUrl,);
+            audio = new Audio(audioUrl);
         });
     });
 
 let is_recording = false
 
 
-function start(){
+function start_recording(){
     is_recording = true
     recorder.start()
 }
@@ -33,11 +34,11 @@ function stop(){
 
 function play(url){
     const sound = new Audio(url);
-    sound.play()
+    return sound.play()
 }
 
 async function uploadAudio(filename = "audio.webm") {
-    const formData = new FormData();
+    let formData = new FormData();
     formData.append("file", blob, filename);
 
     try {
@@ -53,3 +54,20 @@ async function uploadAudio(filename = "audio.webm") {
     }
 }
 
+function mic_down(){
+    start_recording()
+}
+function mic_up(){
+    stop()
+    setTimeout(() => {
+        uploadAudio("payments.webm");
+        fetch('/payment-audio')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                payment = data
+                play("audio/"+data["audio_file"])
+                open_touch_pad()
+            }); 
+    }, 500);
+}
