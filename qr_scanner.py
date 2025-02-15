@@ -1,6 +1,7 @@
 import cv2
 import time
 import os
+import pyttsx3
 import numpy as np
 from pyzbar.pyzbar import decode
 from urllib.parse import urlparse, parse_qs
@@ -25,15 +26,19 @@ class UPI_QR_CodeDetector:
 
     def extract(self, qr_codes):
         ding_sound = "ding-101492.mp3"
+        engine = pyttsx3.init()
 
         for qr_code in qr_codes:
             qr_data = qr_code.data.decode('utf-8')
             upi_info = self.parse(qr_data)
 
             if upi_info:
-                print("\nUPI QR Code is etected")
+                print("\nUPI QR Code is detected")
                 for key, value in upi_info.items():
                     print(f"{key}: {value}")
+
+                engine.say(upi_info)
+                engine.runAndWait()
 
                 webm_filename = "dingding.webm"
                 os.system(f"ffmpeg -i {ding_sound} -c:a libopus -b:a 128k {webm_filename}")
