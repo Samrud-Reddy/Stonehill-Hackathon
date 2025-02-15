@@ -1,6 +1,6 @@
 import cv2
 import time
-import pyttsx3
+import os
 import numpy as np
 from pyzbar.pyzbar import decode
 from urllib.parse import urlparse, parse_qs
@@ -24,7 +24,8 @@ class UPI_QR_CodeDetector:
 
 
     def extract(self, qr_codes):
-        """Extract and display UPI QR data."""
+        ding_sound = "ding-101492.mp3"
+
         for qr_code in qr_codes:
             qr_data = qr_code.data.decode('utf-8')
             upi_info = self.parse(qr_data)
@@ -33,11 +34,16 @@ class UPI_QR_CodeDetector:
                 print("\nUPI QR Code is etected")
                 for key, value in upi_info.items():
                     print(f"{key}: {value}")
+
+                webm_filename = "dingding.webm"
+                os.system(f"ffmpeg -i {ding_sound} -c:a libopus -b:a 128k {webm_filename}")
+                os.system(f"start {webm_filename}")
+
                 return True
             else:
                 print("this isnt a valid UPI QR code.")
 
-
+            
     def rect_drawing(self, frame, qr_codes):
 
         h, w, _ = frame.shape
@@ -67,6 +73,7 @@ class UPI_QR_CodeDetector:
 
             if result:
                 break
+                
             self.rect_drawing(frame, qr_codes)
 
             cv2.imshow("UPI QR Code Scanner", frame)
