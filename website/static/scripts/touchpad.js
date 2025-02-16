@@ -62,7 +62,7 @@ function close_touch_pad() {
             play("https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3")
             open_touch_pad()
         } else if (how_many_times_run == 7){
-            console.log(upi)
+            play("audio/payment_complete.webm")
         }
         closing = false
     }

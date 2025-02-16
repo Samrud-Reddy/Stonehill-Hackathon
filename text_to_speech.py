@@ -17,7 +17,7 @@ def enter_pin():
 
 #Static
 def generate_choose():
-    text = "Tap once to check balance, type twice to send money"
+    text = "Tap once to check balance, tap twice to send money"
     generate_tts(text, "generate_choose.mp3") 
     return "generate_choose.webm"
 
@@ -35,7 +35,7 @@ def payment_complete():
 
 #Static
 def upi_instructions():
-    text = "Enter your UPI by tapping out the digit tap"
+    text = "Enter your UPI by tapping out the your digits"
     generate_tts(text, "upi_instructions") 
     return "upi_instructions.webm"
 
@@ -45,7 +45,7 @@ def balance(price):
     return "balance.webm"
 
 def confirm_number(price, number):
-    text = f"Are you sure you want to pay {price} to {number}. Tap once for yes Tap twice for no."
+    text = f"Are you sure you want to pay {price} rupees to {number}. Tap once for yes Tap twice for no."
     generate_tts(text, "confirm_number.mp3") 
     return "confirm_number.webm"
 
@@ -55,7 +55,7 @@ def confirm_upi_id(price, upi_id):
     return "confirm_upi_id.webm"
 
 def confirm_contact(price, contact_number):
-    text = f"Are you sure you want to pay {price} to {contact_number}. Tap once for yes Tap twice for no."
+    text = f"Are you sure you want to pay {price} rupees to {contact_number}. Tap once for yes Tap twice for no."
     generate_tts(text, "confirm_contact.mp3") 
     return "confirm_contact.webm"
 
